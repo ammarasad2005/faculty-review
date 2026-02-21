@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, List, Search } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const PAGE_SIZE_OPTIONS = [12, 24, 48];
@@ -103,7 +103,7 @@ const Index = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center border-2 border-destructive p-8">
+        <div className="text-center rounded-2xl border border-destructive/30 bg-destructive/5 p-8 max-w-md">
           <h2 className="text-xl font-bold text-destructive mb-2">Error Loading Data</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
@@ -112,7 +112,13 @@ const Index = () => {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-gradient-to-b from-primary/[0.06] via-primary/[0.02] to-primary/[0.08] dark:from-primary/[0.08] dark:via-primary/[0.03] dark:to-primary/[0.10]">
+    <PageTransition className="min-h-screen bg-background">
+      {/* Aurora background orbs */}
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-primary-end/[0.04] rounded-full blur-3xl" />
+      </div>
+
       <Header
         totalFaculty={faculty.length}
         totalDepartments={departments.length}
@@ -132,13 +138,13 @@ const Index = () => {
         {loading ? (
           <div className="grid gap-4 mt-6 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(9)].map((_, i) => (
-              <div key={i} className="border-2 border-border p-4">
+              <div key={i} className="rounded-2xl border border-border/50 bg-card/80 p-4">
                 <div className="flex gap-4">
-                  <Skeleton className="w-20 h-20 shrink-0" />
+                  <Skeleton className="w-20 h-20 shrink-0 rounded-2xl" />
                   <div className="flex-1 space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-5 w-3/4 rounded-lg" />
+                    <Skeleton className="h-4 w-1/2 rounded-lg" />
+                    <Skeleton className="h-4 w-1/3 rounded-lg" />
                   </div>
                 </div>
               </div>
@@ -155,7 +161,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 {/* Mobile view toggle */}
                 {isMobile && (
-                  <div className="flex border border-border rounded-md overflow-hidden">
+                  <div className="flex border border-border/50 rounded-xl overflow-hidden bg-card/80 backdrop-blur-sm">
                     <Button
                       variant={mobileViewMode === 'carousel' ? 'default' : 'ghost'}
                       size="sm"
@@ -168,7 +174,7 @@ const Index = () => {
                     <Button
                       variant={mobileViewMode === 'list' ? 'default' : 'ghost'}
                       size="sm"
-                      className="h-8 px-2 rounded-none border-l border-border"
+                      className="h-8 px-2 rounded-none border-l border-border/50"
                       onClick={() => setMobileViewMode('list')}
                       aria-label="List view"
                     >
@@ -179,10 +185,10 @@ const Index = () => {
                 
                 <span className="text-sm text-muted-foreground hidden sm:inline">Per page:</span>
                 <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-                  <SelectTrigger className="w-[70px] h-8 border-2">
+                  <SelectTrigger className="w-[70px] h-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-2 border-border">
+                  <SelectContent className="rounded-xl border-border/50 bg-card/95 backdrop-blur-sm">
                     {PAGE_SIZE_OPTIONS.map((size) => (
                       <SelectItem key={size} value={String(size)}>
                         {size}
@@ -222,21 +228,25 @@ const Index = () => {
             )}
 
             {filteredFaculty.length === 0 && (
-              <div className="text-center py-12 border-2 border-dashed border-border mt-6">
-                <p className="text-muted-foreground">
+              <div className="text-center py-14 rounded-2xl border border-dashed border-border/50 mt-6 bg-card/40 backdrop-blur-sm">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                  <Search className="w-5 h-5 text-primary/60" />
+                </div>
+                <p className="font-medium text-foreground">No results found</p>
+                <p className="text-sm text-muted-foreground mt-1">
                   No faculty members found matching your criteria.
                 </p>
               </div>
             )}
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 mt-8">
+              <div className="flex items-center justify-center gap-1.5 mt-8">
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="h-8 w-8 border-2"
+                  className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -252,7 +262,10 @@ const Index = () => {
                       variant={currentPage === page ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => handlePageChange(page)}
-                      className="h-8 w-8 border-2"
+                      className={currentPage === page
+                        ? 'h-8 w-8 rounded-xl bg-gradient-to-br from-primary to-primary-end border-0 shadow-md shadow-primary/20'
+                        : 'h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all'
+                      }
                     >
                       {page}
                     </Button>
@@ -264,7 +277,7 @@ const Index = () => {
                   size="icon"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="h-8 w-8 border-2"
+                  className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -279,10 +292,10 @@ const Index = () => {
         onClose={() => setSelectedFaculty(null)}
       />
 
-      <footer className="border-t border-primary/10 py-8 mt-12 bg-gradient-to-t from-primary/[0.12] via-primary/[0.06] to-transparent dark:from-primary/[0.15] dark:via-primary/[0.08] dark:to-transparent">
+      <footer className="border-t border-border/30 py-8 mt-12 bg-gradient-to-t from-primary/[0.05] via-transparent to-transparent">
         <div className="container text-center text-sm text-muted-foreground">
           <p className="font-medium">Anonymous Faculty Review System • FAST-NUCES Islamabad</p>
-          <p className="mt-1.5 text-muted-foreground/80">Reviews are completely anonymous and cannot be traced back to users.</p>
+          <p className="mt-1.5 text-muted-foreground/70">Reviews are completely anonymous and cannot be traced back to users.</p>
         </div>
       </footer>
     </PageTransition>

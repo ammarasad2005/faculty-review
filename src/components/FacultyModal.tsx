@@ -53,10 +53,12 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
 
   return (
     <Dialog open={!!faculty} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] p-0 border-2 border-border">
-        <DialogHeader className="p-6 pb-0">
-          <div className="flex gap-4">
-            <div className="w-24 h-24 shrink-0 overflow-hidden border-2 border-border bg-muted">
+      <DialogContent className="max-w-2xl max-h-[90vh] p-0 border border-border/60 rounded-2xl overflow-hidden bg-card/95 backdrop-blur-sm">
+        <DialogHeader className="p-6 pb-0 relative">
+          {/* Subtle gradient header background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-transparent to-transparent pointer-events-none rounded-t-2xl" />
+          <div className="flex gap-4 relative">
+            <div className="w-24 h-24 shrink-0 overflow-hidden rounded-2xl ring-2 ring-primary/20 bg-muted shadow-md">
               <img
                 src={faculty.image}
                 alt={faculty.name}
@@ -73,7 +75,9 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
                   {faculty.name}
                 </DialogTitle>
                 {faculty.isHOD && (
-                  <Badge variant="secondary">Head of Department</Badge>
+                  <Badge className="bg-gradient-to-r from-primary to-primary-end text-primary-foreground border-0 shadow-sm">
+                    Head of Department
+                  </Badge>
                 )}
               </div>
               
@@ -92,33 +96,33 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
             </div>
           </div>
           
-          <div className="flex gap-4 mt-4 text-sm flex-wrap">
+          <div className="flex gap-4 mt-4 text-sm flex-wrap relative">
             {faculty.office && (
-              <span className="inline-flex items-center gap-1 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground px-2.5 py-1 rounded-full bg-muted/50 border border-border/40">
+                <MapPin className="w-3.5 h-3.5 text-primary/60" />
                 {faculty.office}
               </span>
             )}
             <a
               href={`mailto:${faculty.email}`}
-              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary px-2.5 py-1 rounded-full bg-muted/50 border border-border/40 hover:border-primary/30 transition-colors"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="w-3.5 h-3.5" />
               {faculty.email}
             </a>
             <a
               href={faculty.profile}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary px-2.5 py-1 rounded-full bg-muted/50 border border-border/40 hover:border-primary/30 transition-colors"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-3.5 h-3.5" />
               View Profile
             </a>
           </div>
         </DialogHeader>
 
-        <Separator className="my-4" />
+        <Separator className="my-4 opacity-50" />
 
         <ScrollArea className="max-h-[50vh] px-6 pb-6">
           <div className="space-y-6">
@@ -133,10 +137,10 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
                   <div className="flex items-center gap-2">
                     <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
                     <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                      <SelectTrigger className="w-[140px] h-8 text-sm border-2">
+                      <SelectTrigger className="w-[140px] h-8 text-sm rounded-xl border-border/50 bg-card/80">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-popover border-2 border-border z-50">
+                      <SelectContent className="rounded-xl border-border/50 bg-card/95 backdrop-blur-sm z-50">
                         <SelectItem value="recent">Most Recent</SelectItem>
                         <SelectItem value="highest">Highest Rated</SelectItem>
                         <SelectItem value="lowest">Lowest Rated</SelectItem>

@@ -11,12 +11,12 @@ interface ReviewListProps {
 export function ReviewList({ reviews, isLoading }: ReviewListProps) {
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="border-2 border-border p-4 space-y-2">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
+          <div key={i} className="rounded-xl border border-border/50 bg-card/60 p-4 space-y-2">
+            <Skeleton className="h-5 w-24 rounded-lg" />
+            <Skeleton className="h-4 w-full rounded-lg" />
+            <Skeleton className="h-4 w-3/4 rounded-lg" />
           </div>
         ))}
       </div>
@@ -25,7 +25,7 @@ export function ReviewList({ reviews, isLoading }: ReviewListProps) {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="border-2 border-dashed border-border p-8 text-center">
+      <div className="rounded-2xl border border-dashed border-border/50 p-8 text-center bg-card/40">
         <p className="text-muted-foreground">
           No reviews yet. Be the first to review!
         </p>
@@ -34,9 +34,9 @@ export function ReviewList({ reviews, isLoading }: ReviewListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {reviews.map((review) => (
-        <div key={review.id} className="border-2 border-border p-4 bg-card">
+        <div key={review.id} className="rounded-xl border border-border/50 p-4 bg-card/60 backdrop-blur-sm hover:border-border/70 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <StarRating rating={review.rating} size="sm" />
             <span className="text-xs text-muted-foreground font-mono">
@@ -44,7 +44,7 @@ export function ReviewList({ reviews, isLoading }: ReviewListProps) {
             </span>
           </div>
           {review.comment ? (
-            <p className="text-foreground leading-relaxed">{review.comment}</p>
+            <p className="text-foreground leading-relaxed text-sm">{review.comment}</p>
           ) : (
             <p className="text-muted-foreground italic text-sm">Rating only</p>
           )}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, LogIn, LogOut, Shield, Trophy, Sun, Moon, Bell } from 'lucide-react';
+import { GraduationCap, LogIn, LogOut, Shield, Trophy, Sun, Moon, Bell, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,29 +30,44 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
 
   return (
     <>
-      <header className="border-b border-border/40 bg-gradient-to-br from-primary/[0.03] via-primary/[0.08] to-primary/[0.15] dark:from-primary/[0.05] dark:via-primary/[0.12] dark:to-primary/[0.20] shadow-sm">
-        <div className="container py-4 sm:py-6">
+      <header className="relative border-b border-border/30 overflow-hidden">
+        {/* Gradient mesh background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-primary-end/[0.05] pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/[0.07] rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-primary-end/[0.05] rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container py-5 sm:py-7 relative z-10">
           {/* Top row: Logo + Nav buttons */}
           <div className="flex items-center justify-between gap-3">
-            <Link to="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity min-w-0">
-              <div className="p-1.5 sm:p-2 rounded-lg border border-primary/20 bg-primary text-primary-foreground shadow-md shrink-0">
+            <Link to="/" className="flex items-center gap-2.5 sm:gap-3 hover:opacity-90 transition-opacity min-w-0 group">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-end text-primary-foreground shadow-lg shadow-primary/30 shrink-0 group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-200">
                 <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate gradient-heading">
                 FAST-NUCES Islamabad
               </h1>
             </Link>
 
             {/* Desktop navigation */}
             <div className="hidden sm:flex items-center gap-2 shrink-0">
-              <Button variant="outline" size="icon" onClick={toggleTheme}>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTheme}
+                className="bg-background/60 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all"
+              >
                 <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 <span className="sr-only">Toggle theme</span>
               </Button>
-              <Button variant="outline" size="sm" asChild className="gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="gap-2 bg-background/60 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all"
+              >
                 <Link to="/leaderboard">
-                  <Trophy className="w-4 h-4" />
+                  <Trophy className="w-4 h-4 text-primary" />
                   Leaderboard
                 </Link>
               </Button>
@@ -61,6 +76,7 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
                 size="icon"
                 onClick={() => setShowReviews(true)}
                 aria-label="View recent reviews"
+                className="bg-background/60 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all"
               >
                 <Bell className="w-4 h-4" />
               </Button>
@@ -71,9 +87,9 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
                       variant="outline"
                       size="sm"
                       onClick={() => setShowAdmin(true)}
-                      className="gap-2"
+                      className="gap-2 bg-background/60 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all"
                     >
-                      <Shield className="w-4 h-4" />
+                      <Shield className="w-4 h-4 text-primary" />
                       Admin
                     </Button>
                   )}
@@ -81,7 +97,7 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
                     variant="ghost"
                     size="sm"
                     onClick={() => signOut()}
-                    className="gap-2"
+                    className="gap-2 hover:bg-destructive/10 hover:text-destructive transition-all"
                   >
                     <LogOut className="w-4 h-4" />
                     Logout
@@ -92,7 +108,7 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
                   variant="outline"
                   size="sm"
                   onClick={() => setShowLogin(true)}
-                  className="gap-2"
+                  className="gap-2 bg-background/60 backdrop-blur-sm border-border/50 hover:bg-primary/10 hover:border-primary/40 hover:text-primary transition-all"
                 >
                   <LogIn className="w-4 h-4" />
                   Admin Login
@@ -102,7 +118,12 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
 
             {/* Mobile navigation */}
             <div className="flex sm:hidden items-center gap-2 shrink-0">
-              <Button variant="outline" size="icon" onClick={toggleTheme}>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleTheme}
+                className="bg-background/60 backdrop-blur-sm border-border/50"
+              >
                 <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 <span className="sr-only">Toggle theme</span>
@@ -119,17 +140,18 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
           </div>
 
           {/* Subtitle + Stats */}
-          <div className="mt-2 sm:mt-3">
-            <p className="text-sm sm:text-base text-muted-foreground">
+          <div className="mt-3 sm:mt-4">
+            <p className="text-sm sm:text-base text-muted-foreground flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary/60 shrink-0" />
               Anonymous Faculty Review System
             </p>
-            <div className="flex flex-row gap-4 sm:gap-6 mt-2 sm:mt-3 text-xs sm:text-sm font-mono">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-bold text-foreground">{totalFaculty}</span>
+            <div className="flex flex-row gap-2 sm:gap-3 mt-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/[0.08] border border-primary/20 text-sm">
+                <span className="font-bold text-primary">{totalFaculty}</span>
                 <span className="text-muted-foreground">Faculty</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-bold text-foreground">{totalDepartments}</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/[0.08] border border-primary/20 text-sm">
+                <span className="font-bold text-primary">{totalDepartments}</span>
                 <span className="text-muted-foreground">Departments</span>
               </div>
             </div>

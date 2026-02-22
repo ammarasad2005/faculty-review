@@ -2,18 +2,91 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Review } from '@/types/faculty';
 
+function getCacheKey(facultyId: string) {
+  return `reviews_cache_${facultyId}`;
+}
+
+function getLastFetchedKey(facultyId: string) {
+  return `reviews_last_fetched_${facultyId}`;
+}
+
+function readCachedReviews(facultyId: string): Review[] {
+  try {
+    const raw = localStorage.getItem(getCacheKey(facultyId));
+    return raw ? (JSON.parse(raw) as Review[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCachedReviews(facultyId: string, reviews: Review[]) {
+  try {
+    localStorage.setItem(getCacheKey(facultyId), JSON.stringify(reviews));
+  } catch {
+    // localStorage may be unavailable; ignore
+  }
+}
+
+function readLastFetched(facultyId: string): string | null {
+  return localStorage.getItem(getLastFetchedKey(facultyId));
+}
+
+function saveLastFetched(facultyId: string, timestamp: string) {
+  try {
+    localStorage.setItem(getLastFetchedKey(facultyId), timestamp);
+  } catch {
+    // localStorage may be unavailable; ignore
+  }
+}
+
 export function useReviews(facultyId: string) {
   return useQuery({
     queryKey: ['reviews', facultyId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('faculty_id', facultyId)
-        .order('created_at', { ascending: false });
+      const cached = readCachedReviews(facultyId);
+      const lastFetched = readLastFetched(facultyId);
+      const fetchedAt = new Date().toISOString();
 
-      if (error) throw error;
-      return data as Review[];
+      let newReviews: Review[] = [];
+
+      if (lastFetched && cached.length > 0) {
+        // Incremental fetch: only reviews newer than last fetch
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('faculty_id', facultyId)
+          .gt('created_at', lastFetched)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        newReviews = (data as Review[]) ?? [];
+      } else {
+        // First visit: fetch all reviews
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('faculty_id', facultyId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        newReviews = (data as Review[]) ?? [];
+      }
+
+      // Merge: deduplicate by id, sort by created_at descending
+      const existingIds = new Set(cached.map((r) => r.id));
+      const merged = [
+        ...newReviews.filter((r) => !existingIds.has(r.id)),
+        ...cached,
+      ].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+
+      saveCachedReviews(facultyId, merged);
+      saveLastFetched(facultyId, fetchedAt);
+
+      return merged;
+    },
+    initialData: () => {
+      const cached = readCachedReviews(facultyId);
+      return cached.length > 0 ? cached : undefined;
     },
     enabled: !!facultyId,
     staleTime: 5 * 60 * 1000,

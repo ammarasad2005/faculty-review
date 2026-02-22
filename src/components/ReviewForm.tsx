@@ -73,7 +73,7 @@ export function ReviewForm({ facultyId, facultyName }: ReviewFormProps) {
             className={
               charCount === 0
                 ? 'text-muted-foreground'
-                : charCount < 50
+                : charCount < 1
                 ? 'text-destructive'
                 : charCount > 500
                 ? 'text-destructive'

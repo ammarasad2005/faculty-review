@@ -59,7 +59,7 @@ A web application for students of **FAST-NUCES Islamabad** to anonymously browse
 
 ```sh
 # 1. Clone the repository
-git clone <YOUR_GIT_URL>
+git clone https://github.com/ammarasad2005/faculty-review
 
 # 2. Navigate into the project directory
 cd faculty-review

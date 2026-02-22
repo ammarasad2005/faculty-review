@@ -61,16 +61,6 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Comment is optional, but if provided, must be 50-500 characters
-    if (comment !== undefined && comment !== null && comment !== '') {
-      if (typeof comment !== 'string' || comment.length < 50 || comment.length > 500) {
-        return new Response(
-          JSON.stringify({ error: 'Comment must be between 50 and 500 characters' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-    }
-
     // Create Supabase client with service role for rate limit table access
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,

@@ -16,6 +16,8 @@ export function useReviews(facultyId: string) {
       return data as Review[];
     },
     enabled: !!facultyId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -31,6 +33,8 @@ export function useAllReviews() {
       if (error) throw error;
       return data as Review[];
     },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 
@@ -57,6 +61,8 @@ export function useAllReviewStats() {
 
       return stats;
     },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
 

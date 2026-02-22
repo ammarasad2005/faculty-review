@@ -10,7 +10,7 @@ A web application for students of **FAST-NUCES Islamabad** to anonymously browse
 ![Home Page](https://github.com/user-attachments/assets/dc33bbef-1d9b-4477-ae50-8d8f4ed666c8)
 
 ### Faculty Profile & Review Form
-![Faculty Modal](https://github.com/user-attachments/assets/9d4ff887-21e7-43d4-9086-fa6bd3be0d43)
+![Faculty Modal](https://github.com/user-attachments/assets/6ee439e1-47d5-4b8f-a3a7-45815a0f887c)
 
 ### Leaderboard
 ![Leaderboard](https://github.com/user-attachments/assets/57604a12-0cb5-4a33-abf5-49961a6a624c)

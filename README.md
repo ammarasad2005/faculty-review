@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# FAST-NUCES Islamabad — Faculty Review System
 
-## Project info
+A web application for students of **FAST-NUCES Islamabad** to anonymously browse, search, and review faculty members. All reviews are completely anonymous and cannot be traced back to individual users.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## Screenshots
 
-There are several ways of editing your application.
+### Home Page — Faculty Listing
+![Home Page](https://github.com/user-attachments/assets/6bff51a6-8241-482d-94fb-e360811381dd)
 
-**Use Lovable**
+### Faculty Profile & Review Form
+![Faculty Modal](https://github.com/user-attachments/assets/9d4ff887-21e7-43d4-9086-fa6bd3be0d43)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Leaderboard
+![Leaderboard](https://github.com/user-attachments/assets/1e11a339-3410-49aa-ad34-28c7cc05c3eb)
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Features
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Faculty Directory** — Browse 240+ faculty members across 9 departments. Each card displays the faculty member's photo, name, department, office location, and current star rating.
+- **Search & Filter** — Search faculty by name in real time and filter by department using the dropdown.
+- **Pagination** — Browse results in pages of 12, 24, or 48 faculty per page.
+- **HOD Badge** — Heads of Department are highlighted with a "HOD" badge on their card.
+- **Faculty Profile Modal** — Click any faculty card to open a detailed profile showing their school, office, email address, a link to their official university profile page, an anonymous review form, and all existing reviews.
+- **Anonymous Reviews** — Submit a star rating (1–5) and an optional written comment (up to 500 characters). Reviews cannot be edited, deleted, or traced back to the submitter.
+- **Review Sorting** — Sort reviews for a faculty member by most recent, highest rated, or lowest rated.
+- **Leaderboard** — A dedicated page showing the top 10 highest-rated faculty, a department rankings bar chart, a rating distribution pie chart, and site-wide stats (total reviews, average rating, number of rated faculty, total departments).
+- **Recent Reviews Bell** — A notification button in the header lets you quickly see the latest reviews posted across all faculty.
+- **Dark / Light Mode** — Toggle between dark and light themes using the sun/moon button in the header.
+- **Mobile Responsive** — On mobile, faculty can be browsed in a swipeable carousel view or a compact list view. A hamburger menu consolidates navigation options.
+- **Admin Panel** — Authenticated admins can access a protected admin panel to manage faculty data.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Vite |
+| UI Components | shadcn/ui, Radix UI primitives |
+| Styling | Tailwind CSS |
+| Backend / Database | Supabase (PostgreSQL + Auth) |
+| Data Fetching | TanStack React Query |
+| Charts | Recharts |
+| Routing | React Router v6 |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or later)
+- npm
+
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# 1. Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Navigate into the project directory
+cd faculty-review
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for Production
 
-**Use GitHub Codespaces**
+```sh
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Run Tests
 
-## What technologies are used for this project?
+```sh
+npm test
+```
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Project Structure
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+src/
+├── components/       # Reusable UI components (Header, FacultyCard, ReviewForm, etc.)
+├── contexts/         # React context providers (AuthContext)
+├── hooks/            # Custom hooks for data fetching (useFacultyData, useReviews)
+├── integrations/     # Supabase client setup
+├── pages/            # Top-level page components (Index, Leaderboard, NotFound)
+└── types/            # TypeScript type definitions
+```

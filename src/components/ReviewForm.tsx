@@ -49,7 +49,7 @@ export function ReviewForm({ facultyId, facultyName }: ReviewFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 border-2 border-border p-4 bg-card">
+    <form onSubmit={handleSubmit} className="space-y-4 p-5 rounded-2xl bg-primary/[0.03] border border-primary/15 dark:bg-primary/[0.05]">
       <div>
         <h3 className="font-semibold text-lg mb-2">Rate {facultyName}</h3>
         <StarRating
@@ -65,7 +65,7 @@ export function ReviewForm({ facultyId, facultyName }: ReviewFormProps) {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="(Optional) Share your experience with this faculty member (minimum 50 characters if provided)..."
-          className="min-h-[120px] resize-none border-2"
+          className="min-h-[120px] resize-none rounded-xl border-border/50 bg-card/80 focus-visible:ring-primary/30 focus-visible:border-primary/50"
           maxLength={500}
         />
         <div className="flex justify-between mt-2 text-sm">
@@ -93,7 +93,7 @@ export function ReviewForm({ facultyId, facultyName }: ReviewFormProps) {
       <Button
         type="submit"
         disabled={isPending || rating === 0 || !isValidComment}
-        className="w-full"
+        className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-end border-0 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
       >
         {isPending ? 'Submitting...' : 'Submit Anonymous Review'}
       </Button>

@@ -24,23 +24,25 @@ export function SearchFilter({
   departments,
 }: SearchFilterProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
+    <div className="flex flex-col sm:flex-row gap-3">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10 text-primary pointer-events-none">
+          <Search className="w-4 h-4" />
+        </div>
         <Input
           type="text"
           placeholder="Search faculty by name..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 border-2"
+          className="pl-12 h-11 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
         />
       </div>
       
       <Select value={selectedDepartment} onValueChange={onDepartmentChange}>
-        <SelectTrigger className="w-full sm:w-[280px] border-2">
+        <SelectTrigger className="w-full sm:w-[280px] h-11 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm focus:ring-primary/30">
           <SelectValue placeholder="All Departments" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl border-border/50 bg-card/95 backdrop-blur-sm">
           <SelectItem value="all">All Departments</SelectItem>
           {departments.map((dept) => (
             <SelectItem key={dept} value={dept}>

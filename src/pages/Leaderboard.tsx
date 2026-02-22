@@ -114,19 +114,27 @@ export default function Leaderboard() {
 
   return (
     <PageTransition className="min-h-screen bg-background">
-      <header className="border-b-2 border-border bg-card">
-        <div className="container py-4 sm:py-6">
+      {/* Aurora background orbs */}
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-primary-end/[0.04] rounded-full blur-3xl" />
+      </div>
+
+      <header className="relative border-b border-border/30 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-primary-end/[0.05] pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/[0.06] rounded-full blur-3xl pointer-events-none" />
+        <div className="container py-5 sm:py-6 relative z-10">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button variant="ghost" size="icon" asChild className="shrink-0">
+            <Button variant="ghost" size="icon" asChild className="shrink-0 hover:bg-primary/10 hover:text-primary transition-all rounded-xl">
               <Link to="/">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <div className="p-2 border-2 border-border bg-primary text-primary-foreground shrink-0">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary-end text-primary-foreground shadow-md shadow-primary/20 shrink-0">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate gradient-heading">
                 Faculty Leaderboard
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
@@ -138,92 +146,50 @@ export default function Leaderboard() {
       </header>
 
       <main className="container py-4 sm:py-6 space-y-4 sm:space-y-6 max-w-4xl mx-auto">
-        {/* Stats Overview - 2x2 grid on mobile */}
-        <div className="grid gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-4">
-          <Card className="border">
-            <CardHeader className="p-2.5 sm:p-4 pb-1">
-              <CardTitle className="text-[11px] sm:text-sm font-medium text-muted-foreground flex items-center justify-between">
-                Reviews
-                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2.5 sm:p-4 pt-0">
-              {isLoading ? (
-                <Skeleton className="h-5 sm:h-7 w-12" />
-              ) : (
-                <div className="text-lg sm:text-2xl font-bold">{overallStats.totalReviews}</div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardHeader className="p-2.5 sm:p-4 pb-1">
-              <CardTitle className="text-[11px] sm:text-sm font-medium text-muted-foreground flex items-center justify-between">
-                Avg
-                <Star className="h-3 w-3 sm:h-4 sm:w-4" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2.5 sm:p-4 pt-0">
-              {isLoading ? (
-                <Skeleton className="h-5 sm:h-7 w-12" />
-              ) : (
-                <div className="text-lg sm:text-2xl font-bold">
-                  {overallStats.avgRating.toFixed(1)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardHeader className="p-2.5 sm:p-4 pb-1">
-              <CardTitle className="text-[11px] sm:text-sm font-medium text-muted-foreground flex items-center justify-between">
-                Rated
-                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2.5 sm:p-4 pt-0">
-              {isLoading ? (
-                <Skeleton className="h-5 sm:h-7 w-12" />
-              ) : (
-                <div className="text-lg sm:text-2xl font-bold">
-                  {overallStats.facultyWithReviews}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="border">
-            <CardHeader className="p-2.5 sm:p-4 pb-1">
-              <CardTitle className="text-[11px] sm:text-sm font-medium text-muted-foreground flex items-center justify-between">
-                Depts
-                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2.5 sm:p-4 pt-0">
-              {isLoading ? (
-                <Skeleton className="h-5 sm:h-7 w-12" />
-              ) : (
-                <div className="text-lg sm:text-2xl font-bold">{departments.length}</div>
-              )}
-            </CardContent>
-          </Card>
+        {/* Stats Overview */}
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+          {[
+            { label: 'Total Reviews', value: overallStats.totalReviews, icon: MessageSquare },
+            { label: 'Avg Rating', value: overallStats.avgRating.toFixed(1), icon: Star },
+            { label: 'Rated Faculty', value: overallStats.facultyWithReviews, icon: Users },
+            { label: 'Departments', value: departments.length, icon: TrendingUp },
+          ].map(({ label, value, icon: Icon }) => (
+            <Card key={label} className="border border-border/60 bg-card/80 backdrop-blur-sm hover:border-primary/30 transition-all hover:shadow-md hover:shadow-primary/[0.08]">
+              <CardHeader className="p-3 sm:p-4 pb-1">
+                <CardTitle className="text-[11px] sm:text-xs font-medium text-muted-foreground flex items-center justify-between">
+                  {label}
+                  <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-3 w-3 text-primary" />
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-4 pt-0">
+                {isLoading ? (
+                  <Skeleton className="h-5 sm:h-7 w-12 rounded-lg" />
+                ) : (
+                  <div className="text-lg sm:text-2xl font-bold">{value}</div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Content sections - stack on mobile */}
         <div className="space-y-4 sm:space-y-6">
           {/* Top Rated Faculty */}
-          <Card className="border">
-            <CardHeader className="p-3 sm:p-4">
+          <Card className="border border-border/60 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="p-4">
               <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-                <Trophy className="h-4 w-4 text-primary" />
+                <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-primary to-primary-end flex items-center justify-center shadow-sm">
+                  <Trophy className="h-3.5 w-3.5 text-primary-foreground" />
+                </div>
                 Top 10 Faculty
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
+            <CardContent className="p-4 pt-0">
               {isLoading ? (
                 <div className="space-y-2">
                   {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
+                    <Skeleton key={i} className="h-12 w-full rounded-xl" />
                   ))}
                 </div>
               ) : topRated.length === 0 ? (
@@ -231,50 +197,59 @@ export default function Leaderboard() {
                   No reviews yet. Be the first to rate!
                 </p>
               ) : (
-                <div className="space-y-1.5 sm:space-y-2">
-                  {topRated.map((member, index) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center gap-2 p-2 border border-border bg-background/50 rounded-sm"
-                    >
-                      <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-muted text-[10px] sm:text-xs font-bold shrink-0 rounded-sm">
-                        {index + 1}
+                <div className="space-y-2">
+                  {topRated.map((member, index) => {
+                    const medalColors = [
+                      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700/40',
+                      'bg-slate-100 text-slate-600 dark:bg-slate-700/40 dark:text-slate-300 border-slate-200 dark:border-slate-600/40',
+                      'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400 border-orange-200 dark:border-orange-700/40',
+                    ];
+                    const rankClass = index < 3 ? medalColors[index] : 'bg-muted/50 text-muted-foreground border-border/40';
+
+                    return (
+                      <div
+                        key={member.id}
+                        className="flex items-center gap-3 p-3 rounded-xl border border-border/40 bg-background/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
+                      >
+                        <div className={`flex items-center justify-center w-7 h-7 text-xs font-bold shrink-0 rounded-lg border ${rankClass}`}>
+                          {index + 1}
+                        </div>
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          className="w-8 h-8 object-cover rounded-xl ring-1 ring-border/50 shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder.svg';
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-xs sm:text-sm truncate">{member.name}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {member.department}
+                          </p>
+                        </div>
+                        <div className="text-right shrink-0 flex items-center gap-1.5">
+                          <StarRating rating={Math.round(member.avgRating)} size="sm" />
+                          <span className="font-bold text-xs text-primary">
+                            {member.avgRating.toFixed(1)}
+                          </span>
+                        </div>
                       </div>
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-7 h-7 sm:w-8 sm:h-8 object-cover border border-border rounded-sm shrink-0"
-                        onError={(e) => {
-                          e.currentTarget.src = '/placeholder.svg';
-                        }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs sm:text-sm truncate">{member.name}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">
-                          {member.department}
-                        </p>
-                      </div>
-                      <div className="text-right shrink-0 flex items-center gap-1">
-                        <StarRating rating={Math.round(member.avgRating)} size="sm" />
-                        <span className="font-bold text-xs">
-                          {member.avgRating.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Department Rankings */}
-          <Card className="border">
-            <CardHeader className="p-3 sm:p-4">
+          <Card className="border border-border/60 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="p-4">
               <CardTitle className="text-sm sm:text-base">Department Rankings</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
+            <CardContent className="p-4 pt-0">
               {isLoading ? (
-                <Skeleton className="h-[200px] w-full" />
+                <Skeleton className="h-[200px] w-full rounded-xl" />
               ) : departmentStats.length === 0 ? (
                 <p className="text-muted-foreground text-center py-6 text-sm">
                   No department data available yet.
@@ -295,12 +270,12 @@ export default function Leaderboard() {
                         contentStyle={{
                           backgroundColor: 'hsl(var(--card))',
                           border: '1px solid hsl(var(--border))',
-                          borderRadius: '4px',
+                          borderRadius: '12px',
                           fontSize: '11px',
                         }}
                         formatter={(value: number) => [value.toFixed(2), 'Avg']}
                       />
-                      <Bar dataKey="avgRating" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="avgRating" fill="hsl(var(--primary))" radius={[0, 6, 6, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -309,13 +284,13 @@ export default function Leaderboard() {
           </Card>
 
           {/* Rating Distribution */}
-          <Card className="border">
-            <CardHeader className="p-3 sm:p-4">
+          <Card className="border border-border/60 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="p-4">
               <CardTitle className="text-sm sm:text-base">Rating Distribution</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
+            <CardContent className="p-4 pt-0">
               {isLoading ? (
-                <Skeleton className="h-[140px] w-full" />
+                <Skeleton className="h-[140px] w-full rounded-xl" />
               ) : ratingDistribution.every((d) => d.count === 0) ? (
                 <p className="text-muted-foreground text-center py-6 text-sm">
                   No rating data available yet.
@@ -331,7 +306,7 @@ export default function Leaderboard() {
                           cy="50%"
                           innerRadius={30}
                           outerRadius={50}
-                          paddingAngle={2}
+                          paddingAngle={3}
                           dataKey="count"
                         >
                           {ratingDistribution.map((entry, index) => (
@@ -342,7 +317,7 @@ export default function Leaderboard() {
                           contentStyle={{
                             backgroundColor: 'hsl(var(--card))',
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '4px',
+                            borderRadius: '12px',
                             fontSize: '11px',
                           }}
                         />
@@ -353,7 +328,7 @@ export default function Leaderboard() {
                     {ratingDistribution.map((entry, index) => (
                       <div key={entry.rating} className="flex items-center gap-1.5">
                         <div
-                          className="w-2.5 h-2.5 rounded-sm shrink-0"
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
                           style={{ backgroundColor: COLORS[index % COLORS.length] }}
                         />
                         <span className="text-[11px] sm:text-xs text-muted-foreground">

@@ -82,11 +82,6 @@ export function ReviewForm({ facultyId, facultyName }: ReviewFormProps) {
           >
             {charCount}/500 characters
           </span>
-          {charCount > 0 && charCount < 50 && (
-            <span className="text-muted-foreground">
-              {50 - charCount} more needed
-            </span>
-          )}
         </div>
       </div>
 

@@ -24,7 +24,7 @@ const PAGE_SIZE_OPTIONS = [12, 24, 48];
 
 const Index = () => {
   const { faculty, departments, loading, error } = useFacultyData();
-  const { data: reviewStats } = useAllReviewStats();
+  const { data: reviewStats, isLoading: statsLoading } = useAllReviewStats();
   const isMobile = useIsMobile();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +55,9 @@ const Index = () => {
       .sort((a, b) => {
         const avgA = reviewStats?.[a.id]?.avg ?? 0;
         const avgB = reviewStats?.[b.id]?.avg ?? 0;
-        return avgB - avgA;
+        const totalA = reviewStats?.[a.id]?.total ?? 0;
+        const totalB = reviewStats?.[b.id]?.total ?? 0;
+        return avgB - avgA || totalB - totalA;
       });
   }, [faculty, searchQuery, selectedDepartment, reviewStats]);
 
@@ -141,7 +143,7 @@ const Index = () => {
           departments={departments}
         />
 
-        {loading ? (
+        {(loading || statsLoading) ? (
           <div className="grid gap-4 mt-6 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(9)].map((_, i) => (
               <div key={i} className="rounded-2xl border border-border/50 bg-card/80 p-4">

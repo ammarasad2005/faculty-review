@@ -111,28 +111,93 @@ export function useAllReviews() {
   });
 }
 
+const STATS_CACHE_KEY = 'reviews_stats_cache';
+const STATS_LAST_FETCHED_KEY = 'reviews_stats_last_fetched';
+
+type StatsMap = Record<string, { total: number; sum: number; avg: number }>;
+
+function readCachedStats(): StatsMap | null {
+  try {
+    const raw = localStorage.getItem(STATS_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as StatsMap) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveCachedStats(stats: StatsMap) {
+  try {
+    localStorage.setItem(STATS_CACHE_KEY, JSON.stringify(stats));
+  } catch {
+    // localStorage may be unavailable; ignore
+  }
+}
+
+function readStatsLastFetched(): string | null {
+  try {
+    return localStorage.getItem(STATS_LAST_FETCHED_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveStatsLastFetched(timestamp: string) {
+  try {
+    localStorage.setItem(STATS_LAST_FETCHED_KEY, timestamp);
+  } catch {
+    // localStorage may be unavailable; ignore
+  }
+}
+
+function computeStats(reviews: { faculty_id: string; rating: number }[], base: StatsMap = {}): StatsMap {
+  const stats: StatsMap = { ...base };
+  reviews.forEach((review) => {
+    if (!stats[review.faculty_id]) {
+      stats[review.faculty_id] = { total: 0, sum: 0, avg: 0 };
+    }
+    stats[review.faculty_id].total++;
+    stats[review.faculty_id].sum += review.rating;
+    stats[review.faculty_id].avg = stats[review.faculty_id].sum / stats[review.faculty_id].total;
+  });
+  return stats;
+}
+
 export function useAllReviewStats() {
   return useQuery({
     queryKey: ['review-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('reviews')
-        .select('faculty_id, rating');
+      const cachedStats = readCachedStats();
+      const lastFetched = readStatsLastFetched();
+      const fetchedAt = new Date().toISOString();
 
-      if (error) throw error;
+      let stats: StatsMap;
 
-      const stats: Record<string, { total: number; sum: number; avg: number }> = {};
-      
-      (data as Review[]).forEach((review) => {
-        if (!stats[review.faculty_id]) {
-          stats[review.faculty_id] = { total: 0, sum: 0, avg: 0 };
-        }
-        stats[review.faculty_id].total++;
-        stats[review.faculty_id].sum += review.rating;
-        stats[review.faculty_id].avg = stats[review.faculty_id].sum / stats[review.faculty_id].total;
-      });
+      if (lastFetched && cachedStats) {
+        // Incremental fetch: only reviews newer than last fetch
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('faculty_id, rating')
+          .gt('created_at', lastFetched);
 
+        if (error) throw error;
+        stats = computeStats((data as { faculty_id: string; rating: number }[]) ?? [], cachedStats);
+      } else {
+        // First visit: fetch all reviews
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('faculty_id, rating');
+
+        if (error) throw error;
+        stats = computeStats((data as { faculty_id: string; rating: number }[]) ?? []);
+      }
+
+      saveCachedStats(stats);
+      saveStatsLastFetched(fetchedAt);
       return stats;
+    },
+    initialData: () => {
+      const cached = readCachedStats();
+      return cached ?? undefined;
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

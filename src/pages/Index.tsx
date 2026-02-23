@@ -17,8 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, LayoutGrid, List, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, List, Search, ArrowUpDown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
+
+type SortOrder = 'none' | 'highest' | 'lowest';
 
 const PAGE_SIZE_OPTIONS = [12, 24, 48];
 
@@ -32,6 +36,8 @@ const Index = () => {
   const [selectedFaculty, setSelectedFaculty] = useState<ProcessedFaculty | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
+  const [sortOrder, setSortOrder] = useState<SortOrder>('none');
+  const [sortOpen, setSortOpen] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState<'carousel' | 'list'>(() => {
     const saved = localStorage.getItem('facultyViewMode');
     return saved === 'list' ? 'list' : 'carousel';
@@ -53,17 +59,36 @@ const Index = () => {
     });
   }, [faculty, searchQuery, selectedDepartment]);
 
-  // Reset to page 1 when filters change
-  useMemo(() => {
+  // Reset to page 1 (and sort) when filters change
+  useEffect(() => {
     setCurrentPage(1);
+    setSortOrder('none');
   }, [searchQuery, selectedDepartment]);
 
-  const totalPages = Math.ceil(filteredFaculty.length / pageSize);
+  const sortedFaculty = useMemo(() => {
+    if (sortOrder === 'none') return filteredFaculty;
+    const sorted = [...filteredFaculty];
+    if (sortOrder === 'highest') {
+      return sorted.sort((a, b) => {
+        const aAvg = reviewStats?.[a.id]?.avg ?? -1;
+        const bAvg = reviewStats?.[b.id]?.avg ?? -1;
+        return bAvg - aAvg;
+      });
+    }
+    // lowest
+    return sorted.sort((a, b) => {
+      const aAvg = reviewStats?.[a.id]?.avg ?? Infinity;
+      const bAvg = reviewStats?.[b.id]?.avg ?? Infinity;
+      return aAvg - bAvg;
+    });
+  }, [filteredFaculty, sortOrder, reviewStats]);
+
+  const totalPages = Math.ceil(sortedFaculty.length / pageSize);
   
   const paginatedFaculty = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
-    return filteredFaculty.slice(start, start + pageSize);
-  }, [filteredFaculty, currentPage, pageSize]);
+    return sortedFaculty.slice(start, start + pageSize);
+  }, [sortedFaculty, currentPage, pageSize]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -154,11 +179,53 @@ const Index = () => {
           <>
             <div className="flex items-center justify-between gap-4 mt-4 mb-4 flex-wrap">
               <p className="text-sm text-muted-foreground">
-                Showing {paginatedFaculty.length} of {filteredFaculty.length} faculty members
-                {filteredFaculty.length !== faculty.length && ` (filtered from ${faculty.length})`}
+                Showing {paginatedFaculty.length} of {sortedFaculty.length} faculty members
+                {sortedFaculty.length !== faculty.length && ` (filtered from ${faculty.length})`}
               </p>
               
               <div className="flex items-center gap-2">
+                {/* Sort popover */}
+                <Popover open={sortOpen} onOpenChange={setSortOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`h-8 gap-1.5 rounded-xl border-border/50 bg-card/80 text-sm ${sortOrder !== 'none' ? 'border-primary/40 text-primary' : ''}`}
+                    >
+                      <ArrowUpDown className="h-3.5 w-3.5" />
+                      {sortOrder === 'none' ? 'Sort' : sortOrder === 'highest' ? 'Sort: High→Low' : 'Sort: Low→High'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-44 p-1.5 rounded-xl border-border/50 bg-card/95 backdrop-blur-sm z-50"
+                    align="end"
+                  >
+                    <button
+                      className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 ${sortOrder === 'highest' ? 'text-primary font-medium bg-primary/5' : ''}`}
+                      onClick={() => { setSortOrder('highest'); setSortOpen(false); }}
+                    >
+                      High to Low
+                    </button>
+                    <button
+                      className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 ${sortOrder === 'lowest' ? 'text-primary font-medium bg-primary/5' : ''}`}
+                      onClick={() => { setSortOrder('lowest'); setSortOpen(false); }}
+                    >
+                      Low to High
+                    </button>
+                    {sortOrder !== 'none' && (
+                      <>
+                        <Separator className="my-1 opacity-50" />
+                        <button
+                          className="w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 text-muted-foreground"
+                          onClick={() => { setSortOrder('none'); setSortOpen(false); }}
+                        >
+                          Clear Sort
+                        </button>
+                      </>
+                    )}
+                  </PopoverContent>
+                </Popover>
+
                 {/* Mobile view toggle */}
                 {isMobile && (
                   <div className="flex border border-border/50 rounded-xl overflow-hidden bg-card/80 backdrop-blur-sm">
@@ -227,7 +294,7 @@ const Index = () => {
               </div>
             )}
 
-            {filteredFaculty.length === 0 && (
+            {sortedFaculty.length === 0 && (
               <div className="text-center py-14 rounded-2xl border border-dashed border-border/50 mt-6 bg-card/40 backdrop-blur-sm">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                   <Search className="w-5 h-5 text-primary/60" />

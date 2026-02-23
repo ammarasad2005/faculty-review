@@ -3,13 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StarRating } from './StarRating';
 import { ReviewForm } from './ReviewForm';
 import { ReviewList } from './ReviewList';
@@ -17,7 +12,7 @@ import { useReviews } from '@/hooks/useReviews';
 import { ProcessedFaculty } from '@/hooks/useFacultyData';
 import { ExternalLink, Mail, ArrowUpDown, MapPin } from 'lucide-react';
 
-type SortOption = 'recent' | 'highest' | 'lowest';
+type SortOption = 'none' | 'highest' | 'lowest';
 
 interface FacultyModalProps {
   faculty: ProcessedFaculty | null;
@@ -26,24 +21,29 @@ interface FacultyModalProps {
 
 export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
   const { data: reviews, isLoading } = useReviews(faculty?.id || '');
-  const [sortBy, setSortBy] = useState<SortOption>('recent');
+  const [sortBy, setSortBy] = useState<SortOption>('none');
+  const [sortOpen, setSortOpen] = useState(false);
 
   const sortedReviews = useMemo(() => {
     if (!reviews) return undefined;
+    if (sortBy === 'none') return reviews;
 
     const sorted = [...reviews];
-    switch (sortBy) {
-      case 'highest':
-        return sorted.sort((a, b) => b.rating - a.rating);
-      case 'lowest':
-        return sorted.sort((a, b) => a.rating - b.rating);
-      case 'recent':
-      default:
-        return sorted.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-    }
+    return sorted.sort((a, b) =>
+      sortBy === 'highest' ? b.rating - a.rating : a.rating - b.rating
+    );
   }, [reviews, sortBy]);
+
+  const handleSortChange = (option: SortOption) => {
+    setSortBy(option);
+    setSortOpen(false);
+  };
+
+  const sortLabel: Record<SortOption, string> = {
+    none: '',
+    highest: ': High to Low',
+    lowest: ': Low to High',
+  };
 
   if (!faculty) return null;
 
@@ -134,19 +134,46 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
                   Reviews {totalReviews > 0 && `(${totalReviews})`}
                 </h3>
                 {totalReviews > 1 && (
-                  <div className="flex items-center gap-2">
-                    <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-                    <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                      <SelectTrigger className="w-[140px] h-8 text-sm rounded-xl border-border/50 bg-card/80">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-border/50 bg-card/95 backdrop-blur-sm z-50">
-                        <SelectItem value="recent">Most Recent</SelectItem>
-                        <SelectItem value="highest">Highest Rated</SelectItem>
-                        <SelectItem value="lowest">Lowest Rated</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Popover open={sortOpen} onOpenChange={setSortOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`h-8 gap-1.5 rounded-xl border-border/50 bg-card/80 text-sm ${sortBy !== 'none' ? 'border-primary/40 text-primary' : ''}`}
+                      >
+                        <ArrowUpDown className="h-3.5 w-3.5" />
+                        Sort{sortLabel[sortBy]}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-44 p-1.5 rounded-xl border-border/50 bg-card/95 backdrop-blur-sm z-50"
+                      align="end"
+                    >
+                      <button
+                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 ${sortBy === 'lowest' ? 'text-primary font-medium bg-primary/5' : ''}`}
+                        onClick={() => handleSortChange('lowest')}
+                      >
+                        Low to High
+                      </button>
+                      <button
+                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 ${sortBy === 'highest' ? 'text-primary font-medium bg-primary/5' : ''}`}
+                        onClick={() => handleSortChange('highest')}
+                      >
+                        High to Low
+                      </button>
+                      {sortBy !== 'none' && (
+                        <>
+                          <Separator className="my-1 opacity-50" />
+                          <button
+                            className="w-full text-left text-sm px-3 py-2 rounded-lg transition-colors hover:bg-muted/60 text-muted-foreground"
+                            onClick={() => handleSortChange('none')}
+                          >
+                            Clear Sort
+                          </button>
+                        </>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 )}
               </div>
               <ReviewList reviews={sortedReviews} isLoading={isLoading} />

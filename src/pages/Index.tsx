@@ -49,10 +49,9 @@ const Index = () => {
   }, [mobileViewMode]);
 
   const filteredFaculty = useMemo(() => {
+    const query = searchQuery.toLowerCase();
     return faculty.filter((member) => {
-      const matchesSearch = member.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      const matchesSearch = member.name.toLowerCase().includes(query);
       const matchesDepartment =
         selectedDepartment === 'all' || member.department === selectedDepartment;
       return matchesSearch && matchesDepartment;

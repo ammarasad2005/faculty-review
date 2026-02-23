@@ -57,7 +57,7 @@ export const FacultyCarousel = ({
                 faculty={member}
                 stats={reviewStats?.[member.id]}
                 onClick={() => onFacultyClick(member)}
-                index={0}
+                index={index}
               />
             </div>
           ))}

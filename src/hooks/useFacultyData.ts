@@ -45,19 +45,15 @@ export function useFacultyData() {
     }
 
     const allFaculty: ProcessedFaculty[] = [];
-    const allDepartments: string[] = [];
-    const allSchools: string[] = [];
+    const departmentSet = new Set<string>();
+    const schoolSet = new Set<string>();
 
     Object.entries(data.schools).forEach(([schoolName, school]) => {
-      if (!allSchools.includes(schoolName)) {
-        allSchools.push(schoolName);
-      }
+      schoolSet.add(schoolName);
 
       Object.entries(school.departments).forEach(([deptCode, dept]) => {
         const deptName = dept.name;
-        if (!allDepartments.includes(deptName)) {
-          allDepartments.push(deptName);
-        }
+        departmentSet.add(deptName);
 
         // Add HOD
         if (dept.head_of_department) {
@@ -91,8 +87,8 @@ export function useFacultyData() {
 
     return {
       faculty: allFaculty,
-      departments: allDepartments.sort(),
-      schools: allSchools.sort(),
+      departments: Array.from(departmentSet).sort(),
+      schools: Array.from(schoolSet).sort(),
     };
   }, [data, officeData]);
 

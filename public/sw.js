@@ -1,6 +1,6 @@
 const APP_SHELL_CACHE = 'app-shell-v1';
 const IMAGE_CACHE = 'faculty-images-v1';
-const DATA_CACHE = 'faculty-data-v1';
+const DATA_CACHE = 'faculty-data-v2';
 
 const APP_SHELL_URLS = ['/', '/index.html'];
 

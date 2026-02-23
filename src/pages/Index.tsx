@@ -43,23 +43,15 @@ const Index = () => {
   }, [mobileViewMode]);
 
   const filteredFaculty = useMemo(() => {
-    return faculty
-      .filter((member) => {
-        const matchesSearch = member.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-        const matchesDepartment =
-          selectedDepartment === 'all' || member.department === selectedDepartment;
-        return matchesSearch && matchesDepartment;
-      })
-      .sort((a, b) => {
-        const avgA = reviewStats?.[a.id]?.avg ?? 0;
-        const avgB = reviewStats?.[b.id]?.avg ?? 0;
-        const totalA = reviewStats?.[a.id]?.total ?? 0;
-        const totalB = reviewStats?.[b.id]?.total ?? 0;
-        return avgB - avgA || totalB - totalA;
-      });
-  }, [faculty, searchQuery, selectedDepartment, reviewStats]);
+    return faculty.filter((member) => {
+      const matchesSearch = member.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesDepartment =
+        selectedDepartment === 'all' || member.department === selectedDepartment;
+      return matchesSearch && matchesDepartment;
+    });
+  }, [faculty, searchQuery, selectedDepartment]);
 
   // Reset to page 1 when filters change
   useMemo(() => {

@@ -42,6 +42,7 @@ export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
                 alt={faculty.name}
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.currentTarget.src = '/placeholder.svg';
                 }}

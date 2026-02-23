@@ -28,6 +28,7 @@ export const FacultyListCompact = ({
             alt={member.name}
             className="w-10 h-10 rounded-sm object-cover border border-border bg-muted shrink-0"
             loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.currentTarget.src = '/placeholder.svg';
             }}

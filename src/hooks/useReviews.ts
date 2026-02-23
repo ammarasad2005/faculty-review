@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Review } from '@/types/faculty';
 
@@ -84,6 +84,7 @@ export function useReviews(facultyId: string) {
 
       return merged;
     },
+    placeholderData: keepPreviousData,
     initialData: () => {
       const cached = readCachedReviews(facultyId);
       return cached.length > 0 ? cached : undefined;

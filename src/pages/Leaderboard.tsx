@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';                          // ← add useState
 import { Link } from 'react-router-dom';
 import { PageTransition } from '@/components/PageTransition';
-import { useFacultyData } from '@/hooks/useFacultyData';
+import { useFacultyData, ProcessedFaculty } from '@/hooks/useFacultyData'; // ← add ProcessedFaculty
 import { useAllReviewStats } from '@/hooks/useReviews';
+import { FacultyModal } from '@/components/FacultyModal';           // ← add this import
 import { StarRating } from '@/components/StarRating';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ import {
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))', 'hsl(var(--muted))'];
 
 export default function Leaderboard() {
+  const [selectedFaculty, setSelectedFaculty] = useState<ProcessedFaculty | null>(null); // ← add this
   const { faculty, departments, loading } = useFacultyData();
   const { data: reviewStats, isLoading: statsLoading } = useAllReviewStats();
 
@@ -207,10 +209,11 @@ export default function Leaderboard() {
                     const rankClass = index < 3 ? medalColors[index] : 'bg-muted/50 text-muted-foreground border-border/40';
 
                     return (
-                      <div
-                        key={member.id}
-                        className="flex items-center gap-3 p-3 rounded-xl border border-border/40 bg-background/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-all"
-                      >
+                    <div
+                    key={member.id}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border/40 bg-background/50 hover:border-primary/30 hover:bg-primary/[0.03] transition-all cursor-pointer"
+                    onClick={() => setSelectedFaculty(member)}   // ← add this
+                    >
                         <div className={`flex items-center justify-center w-7 h-7 text-xs font-bold shrink-0 rounded-lg border ${rankClass}`}>
                           {index + 1}
                         </div>
@@ -343,6 +346,12 @@ export default function Leaderboard() {
           </Card>
         </div>
       </main>
+
+      {/* Faculty modal — opens when a leaderboard row is clicked */}
+      <FacultyModal
+        faculty={selectedFaculty}
+        onClose={() => setSelectedFaculty(null)}
+      />
     </PageTransition>
   );
 }

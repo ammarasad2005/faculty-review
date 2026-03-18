@@ -45,14 +45,23 @@ function parseTimestampMs(timestamp: string | null): number | undefined {
   return Number.isNaN(ms) ? undefined : ms;
 }
 
+function normalizeLastFetched(timestamp: string | null): string | null {
+  const ms = parseTimestampMs(timestamp);
+  if (ms === undefined) return null;
+  if (ms > Date.now() + 60_000) return null;
+  return new Date(ms).toISOString();
+}
+
+function getLatestCreatedAt(reviews: { created_at: string }[], fallback: string | null): string {
+  return reviews[0]?.created_at ?? fallback ?? new Date().toISOString();
+}
+
 export function useReviews(facultyId: string) {
   return useQuery({
     queryKey: ['reviews', facultyId],
     queryFn: async () => {
       const cached = readCachedReviews(facultyId);
-      const lastFetched = readLastFetched(facultyId);
-      const fetchedAt = new Date().toISOString();
-
+      const lastFetched = normalizeLastFetched(readLastFetched(facultyId));
       let newReviews: Review[] = [];
 
       if (lastFetched && cached.length > 0) {
@@ -86,7 +95,7 @@ export function useReviews(facultyId: string) {
       ].sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
 
       saveCachedReviews(facultyId, merged);
-      saveLastFetched(facultyId, fetchedAt);
+      saveLastFetched(facultyId, getLatestCreatedAt(merged, lastFetched));
 
       return merged;
     },
@@ -95,7 +104,7 @@ export function useReviews(facultyId: string) {
       const cached = readCachedReviews(facultyId);
       return cached.length > 0 ? cached : undefined;
     },
-    initialDataUpdatedAt: () => parseTimestampMs(readLastFetched(facultyId)),
+    initialDataUpdatedAt: () => parseTimestampMs(normalizeLastFetched(readLastFetched(facultyId))),
     enabled: !!facultyId,
     refetchOnMount: true,
     staleTime: 5 * 60 * 1000,
@@ -120,10 +129,11 @@ export function useAllReviews() {
   });
 }
 
-const STATS_CACHE_KEY = 'reviews_stats_cache';
-const STATS_LAST_FETCHED_KEY = 'reviews_stats_last_fetched';
+const STATS_CACHE_KEY = 'reviews_stats_cache_v2';
+const STATS_LAST_FETCHED_KEY = 'reviews_stats_last_fetched_v2';
 
 type StatsMap = Record<string, { total: number; sum: number; avg: number }>;
+type StatsReviewRow = { faculty_id: string; rating: number; created_at: string };
 
 function readCachedStats(): StatsMap | null {
   try {
@@ -176,39 +186,42 @@ export function useAllReviewStats() {
     queryKey: ['review-stats'],
     queryFn: async () => {
       const cachedStats = readCachedStats();
-      const lastFetched = readStatsLastFetched();
-      const fetchedAt = new Date().toISOString();
+      const lastFetched = normalizeLastFetched(readStatsLastFetched());
 
       let stats: StatsMap;
+      let sourceRows: StatsReviewRow[] = [];
 
       if (lastFetched && cachedStats) {
         // Incremental fetch: only reviews newer than last fetch
         const { data, error } = await supabase
           .from('reviews')
-          .select('faculty_id, rating')
+          .select('faculty_id, rating, created_at')
           .gt('created_at', lastFetched);
 
         if (error) throw error;
-        stats = computeStats((data as { faculty_id: string; rating: number }[]) ?? [], cachedStats);
+        sourceRows = (data as StatsReviewRow[]) ?? [];
+        stats = computeStats(sourceRows, cachedStats);
       } else {
         // First visit: fetch all reviews
         const { data, error } = await supabase
           .from('reviews')
-          .select('faculty_id, rating');
+          .select('faculty_id, rating, created_at')
+          .order('created_at', { ascending: false });
 
         if (error) throw error;
-        stats = computeStats((data as { faculty_id: string; rating: number }[]) ?? []);
+        sourceRows = (data as StatsReviewRow[]) ?? [];
+        stats = computeStats(sourceRows);
       }
 
       saveCachedStats(stats);
-      saveStatsLastFetched(fetchedAt);
+      saveStatsLastFetched(getLatestCreatedAt(sourceRows, lastFetched));
       return stats;
     },
     initialData: () => {
       const cached = readCachedStats();
       return cached ?? undefined;
     },
-    initialDataUpdatedAt: () => parseTimestampMs(readStatsLastFetched()),
+    initialDataUpdatedAt: () => parseTimestampMs(normalizeLastFetched(readStatsLastFetched())),
     refetchOnMount: true,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

@@ -39,6 +39,12 @@ function saveLastFetched(facultyId: string, timestamp: string) {
   }
 }
 
+function parseTimestampMs(timestamp: string | null): number | undefined {
+  if (!timestamp) return undefined;
+  const ms = Date.parse(timestamp);
+  return Number.isNaN(ms) ? undefined : ms;
+}
+
 export function useReviews(facultyId: string) {
   return useQuery({
     queryKey: ['reviews', facultyId],
@@ -89,7 +95,9 @@ export function useReviews(facultyId: string) {
       const cached = readCachedReviews(facultyId);
       return cached.length > 0 ? cached : undefined;
     },
+    initialDataUpdatedAt: () => parseTimestampMs(readLastFetched(facultyId)),
     enabled: !!facultyId,
+    refetchOnMount: true,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
@@ -200,6 +208,8 @@ export function useAllReviewStats() {
       const cached = readCachedStats();
       return cached ?? undefined;
     },
+    initialDataUpdatedAt: () => parseTimestampMs(readStatsLastFetched()),
+    refetchOnMount: true,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });

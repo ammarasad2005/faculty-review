@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, LogIn, LogOut, Shield, Trophy, Sun, Moon, Bell, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { motion } from 'framer-motion';
 import { LoginModal } from './LoginModal';
 import { AdminPanel } from './AdminPanel';
 import { RecentReviewsDialog } from './RecentReviewsDialog';
@@ -28,28 +29,38 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
-      <header className="relative border-b border-border/30 overflow-hidden">
-        {/* Gradient mesh background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-primary-end/[0.05] pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/[0.07] rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-primary-end/[0.05] rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container py-5 sm:py-7 relative z-10">
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${scrolled ? 'bg-background/80 backdrop-blur-xl border-border/50 shadow-lg shadow-black/20 py-2' : 'bg-transparent border-transparent py-4'}`}
+      >
+        <div className="container relative z-10">
           {/* Top row: Logo + Nav buttons */}
           <div className="flex items-center justify-between gap-3">
             <Link to="/" className="flex items-center gap-2.5 sm:gap-3 hover:opacity-90 transition-opacity min-w-0 group">
-              <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary-end text-primary-foreground shadow-lg shadow-primary/30 shrink-0 group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-200">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30 shrink-0 group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-200">
                 <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight truncate gradient-heading">
-                FAST-NUCES Islamabad
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate text-glow">
+                FAST-NUCES
               </h1>
             </Link>
 
             {/* Desktop navigation */}
-            <div className="hidden sm:flex items-center gap-2 shrink-0">
+            <div className="hidden sm:flex items-center gap-3 shrink-0">
               <Button
                 variant="outline"
                 size="icon"
@@ -138,27 +149,8 @@ export function Header({ totalFaculty, totalDepartments, faculty, onFacultyClick
               />
             </div>
           </div>
-
-          {/* Subtitle + Stats */}
-          <div className="mt-3 sm:mt-4">
-            <p className="text-sm sm:text-base text-muted-foreground flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary/60 shrink-0" />
-              Anonymous Faculty Review System
-            </p>
-            <div className="flex flex-row gap-2 sm:gap-3 mt-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/[0.08] border border-primary/20 text-sm">
-                <span className="font-bold text-primary">{totalFaculty}</span>
-                <span className="text-muted-foreground">Faculty</span>
-              </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/[0.08] border border-primary/20 text-sm">
-                <span className="font-bold text-primary">{totalDepartments}</span>
-                <span className="text-muted-foreground">Departments</span>
-              </div>
-            </div>
-          </div>
         </div>
-      </header>
-
+      </motion.header>
 
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       <AdminPanel open={showAdmin} onClose={() => setShowAdmin(false)} />

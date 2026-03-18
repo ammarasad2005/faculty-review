@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from '@/components/Header';
 import { SearchFilter } from '@/components/SearchFilter';
 import { PageTransition } from '@/components/PageTransition';
@@ -17,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, LayoutGrid, List, Search, ArrowUpDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutGrid, List, Search, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
@@ -124,6 +125,13 @@ const Index = () => {
     return pages;
   };
 
+  const { scrollYProgress } = useScroll();
+  const opacityHero = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  const yHero = useTransform(scrollYProgress, [0, 0.2], [0, 100]);
+
+  const scaleMission = useTransform(scrollYProgress, [0.1, 0.3], [0.8, 1]);
+  const opacityMission = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -135,12 +143,19 @@ const Index = () => {
     );
   }
 
+  const scrollToDirectory = () => {
+    const directory = document.getElementById('faculty-directory');
+    if (directory) {
+      directory.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <PageTransition className="min-h-screen bg-background">
-      {/* Aurora background orbs */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-primary-end/[0.04] rounded-full blur-3xl" />
+    <PageTransition className="min-h-screen bg-background text-foreground font-sans">
+      {/* Deep dark cinematic background elements */}
+      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-background">
+        <div className="absolute -top-40 -right-40 w-[800px] h-[800px] bg-primary/[0.03] rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-primary-end/[0.02] rounded-full blur-[100px]" />
       </div>
 
       <Header
@@ -150,7 +165,95 @@ const Index = () => {
         onFacultyClick={setSelectedFaculty}
       />
 
-      <main className="container py-6">
+      {/* Cinematic Hero Section */}
+      <motion.section
+        style={{ opacity: opacityHero, y: yHero }}
+        className="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-12 px-4 overflow-hidden"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          className="text-center max-w-5xl z-10"
+        >
+          <div className="inline-block mb-6 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-md">
+            <span className="text-sm font-medium tracking-widest text-primary uppercase">The pursuit of excellence</span>
+          </div>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight mb-8">
+            Shape the Future of <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-end to-primary bg-300% animate-gradient">
+              Education.
+            </span>
+          </h1>
+          <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed mb-12">
+            An uncompromising, anonymous platform to evaluate, elevate, and empower the academic standards of FAST-NUCES.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <Button
+              size="lg"
+              className="h-14 px-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-lg font-semibold glow-primary"
+              onClick={scrollToDirectory}
+            >
+              Explore Faculty
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
+          onClick={scrollToDirectory}
+        >
+          <span className="text-xs uppercase tracking-widest text-muted-foreground">Scroll</span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          >
+            <ChevronDown className="w-5 h-5 text-primary/50" />
+          </motion.div>
+        </motion.div>
+      </motion.section>
+
+      {/* The "Why" / Narrative Section */}
+      <section className="relative py-32 px-4 overflow-hidden border-t border-border/10 bg-background/50">
+        <motion.div
+          style={{ scale: scaleMission, opacity: opacityMission }}
+          className="container max-w-4xl text-center"
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-8 leading-tight">
+            Why anonymity <span className="italic font-serif text-primary">matters</span>.
+          </h2>
+          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light mb-16">
+            We believe that true transparency requires a safe space. By removing the fear of retaliation, we unlock honest, constructive feedback that drives real change in our academic environment. Your voice is powerful, and here, it is protected.
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-12 border-t border-border/20">
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-black text-primary mb-2">{faculty.length}</span>
+              <span className="text-sm tracking-widest text-muted-foreground uppercase">Faculty Members</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-black text-primary mb-2">{departments.length}</span>
+              <span className="text-sm tracking-widest text-muted-foreground uppercase">Departments</span>
+            </div>
+            <div className="col-span-2 md:col-span-1 flex flex-col items-center">
+              <span className="text-4xl md:text-6xl font-black text-primary mb-2">100%</span>
+              <span className="text-sm tracking-widest text-muted-foreground uppercase">Anonymous</span>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      <main id="faculty-directory" className="container py-24 min-h-screen">
+        <div className="mb-12">
+          <h3 className="text-3xl font-bold mb-2">Faculty Directory</h3>
+          <p className="text-muted-foreground">Find and review your instructors.</p>
+        </div>
+
         <SearchFilter
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

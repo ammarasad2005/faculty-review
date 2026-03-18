@@ -5,6 +5,8 @@ import { StarRating } from './StarRating';
 import { ProcessedFaculty } from '@/hooks/useFacultyData';
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
+
 interface FacultyCardProps {
   faculty: ProcessedFaculty;
   stats?: { total: number; avg: number };
@@ -14,83 +16,89 @@ interface FacultyCardProps {
 
 export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
   ({ faculty, stats, onClick, index = 0 }, ref) => {
-    // Stagger delay: 50ms per card, max 500ms
-    const delay = Math.min(index * 50, 500);
     
     return (
-      <Card
+      <motion.div
         ref={ref}
-        className={cn(
-          'group cursor-pointer overflow-hidden',
-          'border border-border/60',
-          'hover:border-primary/40',
-          'hover:shadow-xl hover:shadow-primary/[0.12]',
-          'hover:-translate-y-1',
-          'transition-all duration-300',
-          'bg-card/95 backdrop-blur-sm',
-          'opacity-0 animate-fade-in'
-        )}
-        style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, delay: Math.min(index * 0.1, 0.5), ease: "easeOut" }}
+        whileHover={{ scale: 1.02 }}
         onClick={onClick}
+        className="block"
       >
-      <CardContent className="p-4">
-        <div className="flex gap-3 sm:gap-4">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
-            <div className="w-full h-full rounded-2xl overflow-hidden ring-2 ring-primary/15 bg-muted shadow-sm">
+        <Card
+          className={cn(
+            'group cursor-pointer overflow-hidden h-full',
+            'border-border/10',
+            'bg-card/5 backdrop-blur-xl',
+            'hover:border-primary/30',
+            'transition-colors duration-500'
+          )}
+        >
+          {/* Subtle gradient glow inside card on hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+
+          <CardContent className="p-0 flex flex-col h-full relative z-10">
+            {/* Image Section - Large and dominant */}
+            <div className="relative w-full aspect-[4/3] overflow-hidden bg-muted/20">
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10" />
               <img
                 src={faculty.image}
                 alt={faculty.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 filter grayscale group-hover:grayscale-0"
                 loading="lazy"
                 decoding="async"
                 onError={(e) => {
                   e.currentTarget.src = '/placeholder.svg';
                 }}
               />
-            </div>
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors duration-200">
-                {faculty.name}
-              </h3>
               {faculty.isHOD && (
-                <Badge className="shrink-0 text-xs bg-gradient-to-r from-primary to-primary-end text-primary-foreground border-0 shadow-sm">
+                <Badge className="absolute top-4 right-4 z-20 text-xs tracking-wider bg-background/80 backdrop-blur-md text-primary border border-primary/20 shadow-xl uppercase font-semibold">
                   HOD
                 </Badge>
               )}
             </div>
             
-            <p className="text-sm text-muted-foreground truncate mt-0.5">
-              {faculty.department}
-            </p>
-            
-            {faculty.office && (
-              <p className="text-xs text-muted-foreground/70 flex items-center gap-1 mt-0.5">
-                <MapPin className="w-3 h-3 shrink-0" />
-                {faculty.office}
-              </p>
-            )}
-            
-            <div className="flex items-center gap-2 mt-2">
-              {stats && stats.total > 0 ? (
-                <>
-                  <StarRating rating={Math.round(stats.avg)} size="sm" />
-                  <span className="text-sm text-muted-foreground">
-                    ({stats.total})
+            {/* Content Section */}
+            <div className="p-6 flex-1 flex flex-col bg-gradient-to-b from-background to-card/5">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-2xl font-bold tracking-tight text-foreground truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-primary-end transition-all duration-300">
+                  {faculty.name}
+                </h3>
+
+                <p className="text-sm font-medium tracking-wide text-primary/80 uppercase mt-2 mb-4">
+                  {faculty.department}
+                </p>
+
+                {faculty.office && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-2 mb-4">
+                    <MapPin className="w-4 h-4 shrink-0 text-primary/50" />
+                    {faculty.office}
+                  </p>
+                )}
+              </div>
+
+              {/* Footer / Stats */}
+              <div className="pt-4 border-t border-border/10 flex items-center justify-between mt-auto">
+                {stats && stats.total > 0 ? (
+                  <div className="flex flex-col gap-1">
+                    <StarRating rating={Math.round(stats.avg)} size="sm" />
+                    <span className="text-xs text-muted-foreground tracking-wider uppercase font-medium">
+                      {stats.total} Reviews
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-sm text-muted-foreground/60 italic">
+                    No reviews yet
                   </span>
-                </>
-              ) : (
-                <span className="text-xs text-muted-foreground/60 italic">
-                  No reviews yet
-                </span>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
     );
   }
 );

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { SearchFilter } from '@/components/SearchFilter';
 import { PageTransition } from '@/components/PageTransition';
+import { CinematicIntro } from '@/components/CinematicIntro';
 import { FacultyCard } from '@/components/FacultyCard';
 import { FacultyCarousel } from '@/components/FacultyCarousel';
 import { FacultyListCompact } from '@/components/FacultyListCompact';
@@ -27,6 +28,16 @@ type SortOrder = 'none' | 'highest' | 'lowest';
 const PAGE_SIZE_OPTIONS = [12, 24, 48];
 
 const Index = () => {
+  const [showIntro, setShowIntro] = useState(() => {
+    return !sessionStorage.getItem('hasSeenIntro');
+  });
+
+  const handleSkipIntro = () => {
+    setShowIntro(false);
+    sessionStorage.setItem('hasSeenIntro', 'true');
+    window.scrollTo(0, 0);
+  };
+
   const { faculty, departments, loading, error } = useFacultyData();
   const { data: reviewStats, isLoading: statsLoading } = useAllReviewStats();
   const isMobile = useIsMobile();
@@ -123,6 +134,10 @@ const Index = () => {
     
     return pages;
   };
+
+  if (showIntro) {
+    return <CinematicIntro onSkip={handleSkipIntro} />;
+  }
 
   if (error) {
     return (

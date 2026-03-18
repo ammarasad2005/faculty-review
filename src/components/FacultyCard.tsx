@@ -5,6 +5,7 @@ import { StarRating } from './StarRating';
 import { ProcessedFaculty } from '@/hooks/useFacultyData';
 import { cn } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
 interface FacultyCardProps {
   faculty: ProcessedFaculty;
   stats?: { total: number; avg: number };
@@ -14,29 +15,33 @@ interface FacultyCardProps {
 
 export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
   ({ faculty, stats, onClick, index = 0 }, ref) => {
-    // Stagger delay: 50ms per card, max 500ms
-    const delay = Math.min(index * 50, 500);
     
     return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5, delay: index * 0.05 }}
+        whileHover={{ scale: 1.02 }}
+        onClick={onClick}
+        ref={ref as any}
+      >
       <Card
-        ref={ref}
         className={cn(
           'group cursor-pointer overflow-hidden',
-          'border border-border/60',
-          'hover:border-primary/40',
-          'hover:shadow-xl hover:shadow-primary/[0.12]',
-          'hover:-translate-y-1',
-          'transition-all duration-300',
-          'bg-card/95 backdrop-blur-sm',
-          'opacity-0 animate-fade-in'
+          'border border-border/20',
+          'hover:border-primary/50',
+          'hover:shadow-2xl hover:shadow-primary/20',
+          'transition-all duration-500 ease-out',
+          'bg-card/40 backdrop-blur-md',
+          'relative'
         )}
-        style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
-        onClick={onClick}
       >
-      <CardContent className="p-4">
-        <div className="flex gap-3 sm:gap-4">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
-            <div className="w-full h-full rounded-2xl overflow-hidden ring-2 ring-primary/15 bg-muted shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <CardContent className="p-5 relative z-10">
+        <div className="flex gap-4 sm:gap-5">
+          <div className="relative w-16 h-16 sm:w-24 sm:h-24 shrink-0">
+            <div className="w-full h-full rounded-2xl overflow-hidden ring-1 ring-border group-hover:ring-primary/50 transition-all duration-500 shadow-lg">
               <img
                 src={faculty.image}
                 alt={faculty.name}
@@ -91,6 +96,7 @@ export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
         </div>
       </CardContent>
       </Card>
+      </motion.div>
     );
   }
 );

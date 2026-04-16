@@ -8,6 +8,8 @@ import { StarRating } from '@/components/StarRating';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getInitials } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trophy, Star, MessageSquare, TrendingUp, Users } from 'lucide-react';
 import {
@@ -217,14 +219,16 @@ export default function Leaderboard() {
                         <div className={`flex items-center justify-center w-7 h-7 text-xs font-bold shrink-0 rounded-lg border ${rankClass}`}>
                           {index + 1}
                         </div>
-                        <img
-                          src={member.image}
-                          alt={member.name}
-                          className="w-8 h-8 object-cover rounded-xl ring-1 ring-border/50 shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.src = '/placeholder.svg';
-                          }}
-                        />
+                        <Avatar className="w-8 h-8 rounded-xl ring-1 ring-border/50 shrink-0">
+                          <AvatarImage
+                            src={member.image}
+                            alt={member.name}
+                            className="object-cover"
+                          />
+                          <AvatarFallback className="rounded-xl bg-primary/5 text-primary font-medium text-[10px]">
+                            {getInitials(member.name)}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-xs sm:text-sm truncate">{member.name}</p>
                           <p className="text-[10px] text-muted-foreground truncate">

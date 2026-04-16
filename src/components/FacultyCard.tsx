@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StarRating } from './StarRating';
 import { ProcessedFaculty } from '@/hooks/useFacultyData';
-import { cn } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
 interface FacultyCardProps {
   faculty: ProcessedFaculty;
@@ -36,18 +37,16 @@ export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
       <CardContent className="p-4">
         <div className="flex gap-3 sm:gap-4">
           <div className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0">
-            <div className="w-full h-full rounded-2xl overflow-hidden ring-2 ring-primary/15 bg-muted shadow-sm">
-              <img
+            <Avatar className="w-full h-full rounded-2xl overflow-hidden ring-2 ring-primary/15 bg-muted shadow-sm">
+              <AvatarImage
                 src={faculty.image}
                 alt={faculty.name}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
+                className="object-cover"
               />
-            </div>
+              <AvatarFallback className="rounded-2xl bg-primary/5 text-primary font-medium text-lg sm:text-xl">
+                {getInitials(faculty.name)}
+              </AvatarFallback>
+            </Avatar>
           </div>
           
           <div className="flex-1 min-w-0">

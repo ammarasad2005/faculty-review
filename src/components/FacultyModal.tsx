@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getInitials } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -114,15 +116,17 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
           </div>
 
           <div className="flex gap-4 relative">
-            <div className="w-24 h-24 shrink-0 overflow-hidden rounded-2xl ring-2 ring-primary/20 bg-muted shadow-md">
-              <img
-                src={faculty.image}
-                alt={faculty.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-              />
+            <div className="w-24 h-24 shrink-0">
+              <Avatar className="w-full h-full overflow-hidden rounded-2xl ring-2 ring-primary/20 bg-muted shadow-md">
+                <AvatarImage
+                  src={faculty.image}
+                  alt={faculty.name}
+                  className="object-cover"
+                />
+                <AvatarFallback className="rounded-2xl bg-primary/5 text-primary font-medium text-3xl">
+                  {getInitials(faculty.name)}
+                </AvatarFallback>
+              </Avatar>
             </div>
             
             <div className="flex-1 min-w-0">

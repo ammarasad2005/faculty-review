@@ -1,6 +1,8 @@
 import { ProcessedFaculty } from '@/hooks/useFacultyData';
 import { StarRating } from './StarRating';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getInitials } from '@/lib/utils';
 import { MapPin } from 'lucide-react';
 
 interface FacultyListCompactProps {
@@ -23,16 +25,16 @@ export const FacultyListCompact = ({
           className="w-full flex items-center gap-3 p-3 text-left hover:bg-accent/50 transition-colors opacity-0 animate-fade-in"
           style={{ animationDelay: `${Math.min(index * 30, 300)}ms`, animationFillMode: 'forwards' }}
         >
-          <img
-            src={member.image}
-            alt={member.name}
-            className="w-10 h-10 rounded-sm object-cover border border-border bg-muted shrink-0"
-            loading="lazy"
-            decoding="async"
-            onError={(e) => {
-              e.currentTarget.src = '/placeholder.svg';
-            }}
-          />
+          <Avatar className="w-10 h-10 rounded-sm border border-border bg-muted shrink-0">
+            <AvatarImage
+              src={member.image}
+              alt={member.name}
+              className="object-cover"
+            />
+            <AvatarFallback className="rounded-sm bg-primary/5 text-primary font-medium text-xs">
+              {getInitials(member.name)}
+            </AvatarFallback>
+          </Avatar>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">

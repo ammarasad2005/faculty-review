@@ -88,12 +88,12 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
 
   // Filter faculty with reviews
   const facultyWithReviews = useMemo(() => {
-    return faculty
-      .filter((f) => reviewCountByFaculty[f.id] > 0)
-      .filter((f) => 
-        f.name.toLowerCase().includes(facultySearch.toLowerCase()) ||
-        f.department.toLowerCase().includes(facultySearch.toLowerCase())
-      );
+    const searchLower = facultySearch.toLowerCase();
+    return faculty.filter((f) =>
+      reviewCountByFaculty[f.id] > 0 &&
+      (f.name.toLowerCase().includes(searchLower) ||
+      f.department.toLowerCase().includes(searchLower))
+    );
   }, [faculty, reviewCountByFaculty, facultySearch]);
 
   // Departments with reviews
@@ -142,9 +142,12 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
   // Delete all reviews for a department
   const deleteDepartmentReviewsMutation = useMutation({
     mutationFn: async (department: string) => {
-      const facultyIds = faculty
-        .filter((f) => f.department === department)
-        .map((f) => f.id);
+      const facultyIds = faculty.reduce<string[]>((acc, f) => {
+        if (f.department === department) {
+          acc.push(f.id);
+        }
+        return acc;
+      }, []);
 
       const { error } = await supabase
         .from('reviews')

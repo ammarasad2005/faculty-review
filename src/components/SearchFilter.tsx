@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 interface SearchFilterProps {
   searchQuery: string;
@@ -34,8 +34,18 @@ export function SearchFilter({
           placeholder="Search faculty by name..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-12 h-11 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
+          className="pl-12 pr-10 h-11 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm focus-visible:ring-primary/30 focus-visible:border-primary/50 transition-all"
         />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => onSearchChange('')}
+            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
       
       <Select value={selectedDepartment} onValueChange={onDepartmentChange}>

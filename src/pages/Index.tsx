@@ -310,6 +310,7 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="icon"
+                  aria-label="Previous page"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"
@@ -327,6 +328,7 @@ const Index = () => {
                       key={page}
                       variant={currentPage === page ? 'default' : 'outline'}
                       size="sm"
+                      aria-label={`Page ${page}`}
                       onClick={() => handlePageChange(page)}
                       className={currentPage === page
                         ? 'h-8 w-8 rounded-xl bg-gradient-to-br from-primary to-primary-end border-0 shadow-md shadow-primary/20'
@@ -341,6 +343,7 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="icon"
+                  aria-label="Next page"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"

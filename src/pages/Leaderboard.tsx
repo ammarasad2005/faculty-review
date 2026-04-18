@@ -129,7 +129,7 @@ export default function Leaderboard() {
         <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/[0.06] rounded-full blur-3xl pointer-events-none" />
         <div className="container py-5 sm:py-6 relative z-10">
           <div className="flex items-center gap-3 sm:gap-4">
-            <Button variant="ghost" size="icon" asChild className="shrink-0 hover:bg-primary/10 hover:text-primary transition-all rounded-xl">
+            <Button variant="ghost" size="icon" aria-label="Go back to home" asChild className="shrink-0 hover:bg-primary/10 hover:text-primary transition-all rounded-xl">
               <Link to="/">
                 <ArrowLeft className="h-5 w-5" />
               </Link>

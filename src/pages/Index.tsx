@@ -310,6 +310,7 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="icon"
+                  aria-label="Previous page"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"
@@ -341,6 +342,7 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="icon"
+                  aria-label="Next page"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   className="h-8 w-8 rounded-xl border-border/50 bg-card/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/30 transition-all"

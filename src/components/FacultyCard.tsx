@@ -21,18 +21,27 @@ export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
     return (
       <Card
         ref={ref}
+        role="button"
+        tabIndex={0}
         className={cn(
-          'group cursor-pointer overflow-hidden',
+          'group cursor-pointer overflow-hidden text-left',
           'border border-border/60',
           'hover:border-primary/40',
           'hover:shadow-xl hover:shadow-primary/[0.12]',
           'hover:-translate-y-1',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           'transition-all duration-300',
           'bg-card/95 backdrop-blur-sm',
           'opacity-0 animate-fade-in'
         )}
         style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
         onClick={onClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClick();
+          }
+        }}
       >
       <CardContent className="p-4">
         <div className="flex gap-3 sm:gap-4">

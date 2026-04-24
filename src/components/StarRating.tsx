@@ -30,8 +30,9 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
             type="button"
             disabled={!interactive}
             onClick={() => interactive && onRatingChange?.(starValue)}
+            aria-label={interactive ? `Rate ${starValue} star${starValue === 1 ? '' : 's'}` : undefined}
             className={cn(
-              'transition-transform',
+              'transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm',
               interactive && 'hover:scale-110 cursor-pointer',
               !interactive && 'cursor-default'
             )}

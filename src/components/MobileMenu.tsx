@@ -9,8 +9,10 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 
+import { User } from '@supabase/supabase-js';
+
 interface MobileMenuProps {
-  user: any;
+  user: User | null;
   isAdmin: boolean;
   onShowLogin: () => void;
   onShowAdmin: () => void;

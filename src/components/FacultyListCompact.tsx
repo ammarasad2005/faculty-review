@@ -22,7 +22,7 @@ export const FacultyListCompact = ({
         <button
           key={member.id}
           onClick={() => onFacultyClick(member)}
-          className="w-full flex items-center gap-3 p-3 text-left hover:bg-accent/50 transition-colors opacity-0 animate-fade-in"
+          className="w-full flex items-center gap-3 p-3 text-left hover:bg-accent/50 focus-visible:outline-none focus-visible:bg-accent/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset transition-colors opacity-0 animate-fade-in"
           style={{ animationDelay: `${Math.min(index * 30, 300)}ms`, animationFillMode: 'forwards' }}
         >
           <Avatar className="w-10 h-10 rounded-sm border border-border bg-muted shrink-0">

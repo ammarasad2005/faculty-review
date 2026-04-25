@@ -18,21 +18,33 @@ export const FacultyCard = React.forwardRef<HTMLDivElement, FacultyCardProps>(
     // Stagger delay: 50ms per card, max 500ms
     const delay = Math.min(index * 50, 500);
     
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onClick();
+      }
+    };
+
     return (
       <Card
         ref={ref}
+        role="button"
+        tabIndex={0}
+        aria-label={`View details for ${faculty.name}`}
         className={cn(
           'group cursor-pointer overflow-hidden',
           'border border-border/60',
           'hover:border-primary/40',
           'hover:shadow-xl hover:shadow-primary/[0.12]',
           'hover:-translate-y-1',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
           'transition-all duration-300',
           'bg-card/95 backdrop-blur-sm',
           'opacity-0 animate-fade-in'
         )}
         style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
         onClick={onClick}
+        onKeyDown={handleKeyDown}
       >
       <CardContent className="p-4">
         <div className="flex gap-3 sm:gap-4">

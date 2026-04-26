@@ -1,0 +1,5 @@
+## 2025-03-01 - Interactive vs Read-Only Accessibility for Rating Components
+
+**Learning:** When using repetitive icons (like stars in a Star Rating component), screen readers will redundantly announce every single interactive element unless explicitly handled. Specifically, when a component supports both read-only and interactive modes, standard `<button>` configurations fail gracefully. In read-only mode, the individual stars are useless to screen readers and should be hidden (`aria-hidden="true"` and `tabIndex={-1}`), while the container itself should summarize the state (e.g., `role="img"` and `aria-label="4 out of 5 stars"`).
+
+**Action:** Whenever building visual components with discrete interactive sub-parts that can also be used for static display, always consider the screen reader flow separately for both states. Ensure container summaries exist for read-only modes, and use `aria-pressed` or `aria-checked` alongside `aria-label` for individual elements during interactive states, keeping keyboard navigation (e.g. `focus-visible` states) clean and robust.

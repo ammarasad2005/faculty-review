@@ -1,0 +1,3 @@
+## 2024-05-01 - Star Rating Accessibility Roles
+**Learning:** When a generic UI component (like a 5-star rating widget) handles both read-only display states (showing 4/5 stars) and interactive states (submitting a 4-star review), it should treat the accessibility DOM completely differently depending on the mode. Exposing 5 disabled `<button>`s to a screen reader in "read-only" mode causes tedious over-announcements.
+**Action:** When creating dual-purpose components (interactive & display), assign `role="img"` to the wrapper with a single summarizing `aria-label` when it acts as display text, and `aria-hidden="true"` the children. Only apply individual semantic button labels (`aria-label`, `aria-pressed`) when the component is interactive.

@@ -1,0 +1,3 @@
+## 2024-05-24 - Screen Reader Flow for Read-Only vs Interactive Star Ratings
+**Learning:** Components supporting both read-only and interactive modes (like Star Ratings) require separate screen reader flows. In read-only mode, a screen reader will announce 5 separate "star" or "empty" elements unless simplified. In interactive mode, they must remain focusable elements.
+**Action:** When a component has both modes, branch the rendering. For read-only, hide repetitive inner elements (`aria-hidden="true"`) and use a container summary (`role="img"`, `aria-label="Rating: X out of Y stars"`). For interactive, render individual buttons with distinct labels (`aria-label="Rate X stars"`) and state (`aria-pressed={isFilled}`).

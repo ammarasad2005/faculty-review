@@ -1,0 +1,3 @@
+## 2024-05-04 - Split Screen Reader Flow for Interactive Components
+**Learning:** For components that can be both read-only and interactive (like Star Ratings), using a single structure often results in noisy and confusing experiences for screen reader users. Simply disabling buttons in read-only mode leaves multiple redundant elements in the accessibility tree.
+**Action:** Treat the screen reader flow separately for read-only vs interactive modes. In read-only mode, hide the repetitive individual elements (`aria-hidden="true"`) and use a container summary (`role="img"`, `aria-label="..."`). In interactive mode, assign individual descriptive labels and `aria-pressed` states to the actionable elements.

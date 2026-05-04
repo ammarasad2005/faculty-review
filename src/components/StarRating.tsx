@@ -18,6 +18,31 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
     lg: 'w-7 h-7',
   };
 
+    if (!interactive) {
+      return (
+        <div
+          ref={ref}
+          className="flex gap-1"
+          role="img"
+          aria-label={`${rating} out of ${maxRating} stars`}
+        >
+          {Array.from({ length: maxRating }).map((_, index) => {
+            const isFilled = index + 1 <= rating;
+            return (
+              <Star
+                key={index}
+                aria-hidden="true"
+                className={cn(
+                  sizeClasses[size],
+                  isFilled ? 'fill-rating text-rating' : 'text-rating-muted'
+                )}
+              />
+            );
+          })}
+        </div>
+      );
+    }
+
     return (
       <div ref={ref} className="flex gap-1">
         {Array.from({ length: maxRating }).map((_, index) => {
@@ -28,12 +53,12 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
           <button
             key={index}
             type="button"
-            disabled={!interactive}
-            onClick={() => interactive && onRatingChange?.(starValue)}
+            aria-label={`Rate ${starValue} stars`}
+            aria-pressed={isFilled}
+            onClick={() => onRatingChange?.(starValue)}
             className={cn(
-              'transition-transform',
-              interactive && 'hover:scale-110 cursor-pointer',
-              !interactive && 'cursor-default'
+              'transition-transform hover:scale-110 cursor-pointer',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm'
             )}
           >
             <Star

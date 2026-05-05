@@ -1,0 +1,3 @@
+## 2025-05-05 - Star Rating Accessibility
+**Learning:** For components supporting both read-only and interactive modes (like Star Ratings), screen reader flow should be treated separately. In read-only mode, individual stars are repetitive and should be hidden, with a container summary used instead. In interactive mode, individual actionable elements need proper labels and states.
+**Action:** Always check the `interactive` or `readonly` prop when implementing accessibility on complex components, and conditionally apply container-level vs item-level ARIA attributes to optimize the screen reader experience.

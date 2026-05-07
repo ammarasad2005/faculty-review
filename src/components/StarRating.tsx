@@ -19,32 +19,46 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
   };
 
     return (
-      <div ref={ref} className="flex gap-1">
+      <div
+        ref={ref}
+        className="flex gap-1"
+        {...(!interactive && {
+          role: 'img',
+          'aria-label': `${rating} out of ${maxRating} stars`,
+        })}
+      >
         {Array.from({ length: maxRating }).map((_, index) => {
-        const starValue = index + 1;
-        const isFilled = starValue <= rating;
+          const starValue = index + 1;
+          const isFilled = starValue <= rating;
 
-        return (
-          <button
-            key={index}
-            type="button"
-            disabled={!interactive}
-            onClick={() => interactive && onRatingChange?.(starValue)}
-            className={cn(
-              'transition-transform',
-              interactive && 'hover:scale-110 cursor-pointer',
-              !interactive && 'cursor-default'
-            )}
-          >
-            <Star
+          return (
+            <button
+              key={index}
+              type="button"
+              disabled={!interactive}
+              onClick={() => interactive && onRatingChange?.(starValue)}
               className={cn(
-                sizeClasses[size],
-                'transition-colors',
-                isFilled ? 'fill-rating text-rating' : 'text-rating-muted'
+                'transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm',
+                interactive && 'hover:scale-110 cursor-pointer',
+                !interactive && 'cursor-default'
               )}
-            />
-          </button>
-        );
+              {...(interactive && {
+                'aria-label': `Rate ${starValue} stars`,
+                'aria-pressed': isFilled,
+              })}
+              {...(!interactive && {
+                'aria-hidden': true,
+              })}
+            >
+              <Star
+                className={cn(
+                  sizeClasses[size],
+                  'transition-colors',
+                  isFilled ? 'fill-rating text-rating' : 'text-rating-muted'
+                )}
+              />
+            </button>
+          );
         })}
       </div>
     );

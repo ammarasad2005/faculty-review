@@ -1,0 +1,3 @@
+## 2024-05-09 - Screen Reader Flow for Dual-Mode Components
+**Learning:** For components that support both read-only and interactive modes (like StarRatings), screen reader flow must be treated separately to avoid repetitive content. In read-only mode, using disabled buttons causes screen readers to read "button disabled" repeatedly for each element.
+**Action:** In read-only mode, render a container with `role="img"` and a summary `aria-label` (e.g., "Rating: X out of 5 stars"), hiding the individual elements with `aria-hidden="true"`. In interactive mode, assign individual labels (e.g., "Rate X stars") and `aria-pressed` attributes to the actionable elements.

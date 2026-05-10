@@ -92,7 +92,7 @@ export function FacultyModal({ faculty, onClose }: FacultyModalProps) {
           <div className="absolute top-4 right-12 z-10">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur-sm">
+                <Button variant="ghost" size="icon" aria-label="Share faculty profile" className="h-8 w-8 rounded-full bg-background/50 hover:bg-background/80 backdrop-blur-sm">
                   <Share2 className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>

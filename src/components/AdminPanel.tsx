@@ -312,6 +312,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                             <Button
                               variant="destructive"
                               size="icon"
+                              aria-label={`Delete review for ${facultyMember?.name || 'faculty'}`}
                               onClick={() => setDeleteConfirmation({ 
                                 mode: 'single', 
                                 reviewId: review.id 

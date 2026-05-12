@@ -1,0 +1,3 @@
+## 2025-02-12 - StarRating Interactive vs Read-Only Accessibility Patterns
+**Learning:** For components that support both read-only and interactive modes (like Star Ratings), using a single markup structure with `disabled` buttons creates a noisy and poor screen reader experience in read-only mode, as it reads each individual star button.
+**Action:** Always treat the screen reader flow separately based on interactivity. In read-only mode, hide repetitive individual elements (`aria-hidden="true"`) and use a container summary (`role="img"`, `aria-label="..."`). In interactive mode, assign individual labels and `aria-pressed` attributes to the actionable elements to facilitate keyboard and screen reader navigation.

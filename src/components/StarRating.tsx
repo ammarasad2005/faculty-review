@@ -19,7 +19,17 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
   };
 
     return (
-      <div ref={ref} className="flex gap-1">
+      <div
+        ref={ref}
+        className="flex gap-1"
+        {...(!interactive ? {
+          role: 'img',
+          'aria-label': `${rating} out of ${maxRating} stars`,
+        } : {
+          role: 'group',
+          'aria-label': 'Select a rating',
+        })}
+      >
         {Array.from({ length: maxRating }).map((_, index) => {
         const starValue = index + 1;
         const isFilled = starValue <= rating;
@@ -31,10 +41,15 @@ export const StarRating = React.forwardRef<HTMLDivElement, StarRatingProps>(
             disabled={!interactive}
             onClick={() => interactive && onRatingChange?.(starValue)}
             className={cn(
-              'transition-transform',
-              interactive && 'hover:scale-110 cursor-pointer',
+              'transition-transform outline-none',
+              interactive && 'hover:scale-110 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary rounded-sm',
               !interactive && 'cursor-default'
             )}
+            aria-hidden={!interactive}
+            {...(interactive && {
+              'aria-label': `Rate ${starValue} star${starValue === 1 ? '' : 's'}`,
+              'aria-pressed': starValue === rating,
+            })}
           >
             <Star
               className={cn(

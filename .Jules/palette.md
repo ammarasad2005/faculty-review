@@ -1,0 +1,3 @@
+## 2024-05-13 - Separating Read-Only and Interactive Component Accessibility
+**Learning:** For components that support both read-only and interactive modes (e.g., Star Ratings), the screen reader flow should be treated completely separately. In read-only mode, individual semantic elements create too much noise and should be hidden, replacing them with a single summarising wrapper (`role="img"`, `aria-label="X out of Y stars"`). In interactive modes, individual elements need concrete labels (`aria-label`, `aria-pressed`) and explicit `focus-visible` styles (`focus-visible:ring-2 focus-visible:ring-primary`).
+**Action:** Always implement separate ARIA patterns depending on interactivity state for complex visual components like ratings, progress bars, or sliders.

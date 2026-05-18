@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet';
 
 interface MobileMenuProps {
-  user: any;
+  user: unknown;
   isAdmin: boolean;
   onShowLogin: () => void;
   onShowAdmin: () => void;

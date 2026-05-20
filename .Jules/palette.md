@@ -1,0 +1,3 @@
+## 2024-05-20 - Dual Mode Screen Reader Context for Star Ratings
+**Learning:** Components like StarRating that serve dual purposes (read-only display vs interactive form input) confuse screen readers if not handled correctly. Interactive stars need `aria-pressed` and individual labels ("Rate 1 stars"). Read-only stars cause annoying repetition ("Star, Star, Star") and should be hidden entirely with `aria-hidden="true"`, with the container given `role="img"` and a single descriptive `aria-label` ("4 out of 5 stars").
+**Action:** When working on components that toggle between read-only and interactive states, always evaluate and fork the screen reader tree accordingly. Use `aria-hidden` to prune the tree for display mode, and enrich the tree for input mode.

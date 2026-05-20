@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet';
 
 interface MobileMenuProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
   isAdmin: boolean;
   onShowLogin: () => void;
